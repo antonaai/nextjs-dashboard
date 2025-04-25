@@ -1,117 +1,241 @@
-// import bcrypt from "bcryptjs"
-// import postgres from 'postgres';
-// import { invoices, customers, revenue, users } from '../lib/placeholder-data';
+import bcrypt from "bcryptjs"
+import postgres from 'postgres';
+import { users, clients, practices, appointments, payments, tags, client_tags, practice_tags } from '../lib/placeholder-data';
 
-// const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+const sql = postgres(process.env.LEXLY_SUPABASE_POSTGRES_URL!, { ssl: 'require' });
 
-// async function seedUsers() {
-//   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-//   await sql`
-//     CREATE TABLE IF NOT EXISTS users (
-//       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-//       name VARCHAR(255) NOT NULL,
-//       email TEXT NOT NULL UNIQUE,
-//       password TEXT NOT NULL
-//     );
-//   `;
+async function seedUsers() {
+  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+  await sql`
+    CREATE TABLE IF NOT EXISTS users (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      email TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      role TEXT DEFAULT 'staff',
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+    );
+  `;
 
-//   const insertedUsers = await Promise.all(
-//     users.map(async (user) => {
-//       const hashedPassword = await bcrypt.hash(user.password, 10);
-//       return sql`
-//         INSERT INTO users (id, name, email, password)
-//         VALUES (${user.id}, ${user.name}, ${user.email}, ${hashedPassword})
-//         ON CONFLICT (id) DO NOTHING;
-//       `;
-//     }),
-//   );
+  const insertedUsers = await Promise.all(
+    users.map(async (user) => {
+      const hashedPassword = await bcrypt.hash(user.password_hash ?? '123456', 10);
+      return sql`
+        INSERT INTO users (id, name, email, password_hash, role, created_at)
+        VALUES (${user.id}, ${user.name}, ${user.email}, ${hashedPassword}, ${user.role}, ${user.created_at})
+        ON CONFLICT (id) DO NOTHING
+      `;
+    }),
+  );
 
-//   return insertedUsers;
-// }
+  return insertedUsers;
+}
 
-// async function seedInvoices() {
-//   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+export async function seedClients() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS clients (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      name TEXT NOT NULL,
+      email TEXT,
+      phone TEXT,
+      notes TEXT,
+      created_by UUID REFERENCES users(id) ON DELETE SET NULL,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+    );
+  `;
 
-//   await sql`
-//     CREATE TABLE IF NOT EXISTS invoices (
-//       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-//       customer_id UUID NOT NULL,
-//       amount INT NOT NULL,
-//       status VARCHAR(255) NOT NULL,
-//       date DATE NOT NULL
-//     );
-//   `;
+  const insertedClients = await Promise.all(
+    clients.map((client) =>
+      sql`
+        INSERT INTO clients (id, name, email, phone, notes, created_by, created_at)
+        VALUES (${client.id}, ${client.name}, ${client.email}, ${client.phone}, ${client.notes}, ${client.created_by}, ${client.created_at})
+        ON CONFLICT (id) DO NOTHING
+      `
+    )
+  );
 
-//   const insertedInvoices = await Promise.all(
-//     invoices.map(
-//       (invoice) => sql`
-//         INSERT INTO invoices (customer_id, amount, status, date)
-//         VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date})
-//         ON CONFLICT (id) DO NOTHING;
-//       `,
-//     ),
-//   );
+  return insertedClients;
+}
 
-//   return insertedInvoices;
-// }
+export async function seedPractices() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS practices (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      name TEXT NOT NULL,
+      description TEXT,
+      price NUMERIC,
+      duration_min INTEGER,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+    );
+  `;
 
-// async function seedCustomers() {
-//   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+  const insertedPractices = await Promise.all(
+    practices.map((practice) =>
+      sql`
+        INSERT INTO practices (id, name, description, price, duration_min, created_at)
+        VALUES (${practice.id}, ${practice.name}, ${practice.description}, ${practice.price}, ${practice.duration_min}, ${practice.created_at})
+        ON CONFLICT (id) DO NOTHING
+      `
+    )
+  );
+}
 
-//   await sql`
-//     CREATE TABLE IF NOT EXISTS customers (
-//       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-//       name VARCHAR(255) NOT NULL,
-//       email VARCHAR(255) NOT NULL,
-//       image_url VARCHAR(255) NOT NULL
-//     );
-//   `;
+export async function seedAppointments() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS appointments (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      client_id UUID REFERENCES clients(id) ON DELETE CASCADE,
+      practice_id UUID REFERENCES practices(id) ON DELETE SET NULL,
+      user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+      start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+      end_time TIMESTAMP WITH TIME ZONE,
+      status TEXT DEFAULT 'confirmed',
+      notes TEXT,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+    );
+  `;
 
-//   const insertedCustomers = await Promise.all(
-//     customers.map(
-//       (customer) => sql`
-//         INSERT INTO customers (id, name, email, image_url)
-//         VALUES (${customer.id}, ${customer.name}, ${customer.email}, ${customer.image_url})
-//         ON CONFLICT (id) DO NOTHING;
-//       `,
-//     ),
-//   );
+  const insertedAppointments = await Promise.all(
+    appointments.map((appt) =>
+      sql`
+        INSERT INTO appointments (id, client_id, practice_id, user_id, start_time, end_time, status, notes, created_at)
+        VALUES (
+          ${appt.id},
+          ${appt.client_id},
+          ${appt.practice_id},
+          ${appt.user_id},
+          ${appt.start_time},
+          ${appt.end_time},
+          ${appt.status},
+          ${appt.notes},
+          ${appt.created_at}
+        )
+        ON CONFLICT (id) DO NOTHING
+      `
+    )
+  );
 
-//   return insertedCustomers;
-// }
+  return insertedAppointments;
+}
 
-// async function seedRevenue() {
-//   await sql`
-//     CREATE TABLE IF NOT EXISTS revenue (
-//       month VARCHAR(4) NOT NULL UNIQUE,
-//       revenue INT NOT NULL
-//     );
-//   `;
+export async function seedPayments() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS payments (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      client_id UUID REFERENCES clients(id) ON DELETE SET NULL,
+      appointment_id UUID REFERENCES appointments(id) ON DELETE SET NULL,
+      amount NUMERIC NOT NULL,
+      method TEXT,
+      paid_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+      notes TEXT
+    );
+  `;
 
-//   const insertedRevenue = await Promise.all(
-//     revenue.map(
-//       (rev) => sql`
-//         INSERT INTO revenue (month, revenue)
-//         VALUES (${rev.month}, ${rev.revenue})
-//         ON CONFLICT (month) DO NOTHING;
-//       `,
-//     ),
-//   );
+  const insertedPayments = await Promise.all(
+    payments.map((payment) =>
+      sql`
+        INSERT INTO payments (id, client_id, appointment_id, amount, method, paid_at, notes)
+        VALUES (
+          ${payment.id},
+          ${payment.client_id},
+          ${payment.appointment_id},
+          ${payment.amount},
+          ${payment.method},
+          ${payment.paid_at},
+          ${payment.notes}
+        )
+        ON CONFLICT (id) DO NOTHING
+      `
+    )
+  );
 
-//   return insertedRevenue;
-// }
+  return insertedPayments;
+}
+
+export async function seedTags() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS tags (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      name TEXT NOT NULL,
+      type TEXT CHECK (type IN ('client', 'practice')) NOT NULL
+    );
+  `;
+
+  const insertedTags = await Promise.all(
+    tags.map((tag) =>
+      sql`
+        INSERT INTO tags (id, name, type)
+        VALUES (${tag.id}, ${tag.name}, ${tag.type})
+        ON CONFLICT (id) DO NOTHING
+      `
+    )
+  );
+
+  return insertedTags;
+}
+
+export async function seedClientTags() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS client_tags (
+      client_id UUID REFERENCES clients(id) ON DELETE CASCADE,
+      tag_id UUID REFERENCES tags(id) ON DELETE CASCADE,
+      PRIMARY KEY (client_id, tag_id)
+    );
+  `;
+
+  const inserted = await Promise.all(
+    client_tags.map((ct) =>
+      sql`
+        INSERT INTO client_tags (client_id, tag_id)
+        VALUES (${ct.client_id}, ${ct.tag_id})
+        ON CONFLICT DO NOTHING
+      `
+    )
+  );
+
+  return inserted;
+}
+
+export async function seedPracticeTags() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS practice_tags (
+      practice_id UUID REFERENCES practices(id) ON DELETE CASCADE,
+      tag_id UUID REFERENCES tags(id) ON DELETE CASCADE,
+      PRIMARY KEY (practice_id, tag_id)
+    );
+  `;
+
+  const inserted = await Promise.all(
+    practice_tags.map((pt) =>
+      sql`
+        INSERT INTO practice_tags (practice_id, tag_id)
+        VALUES (${pt.practice_id}, ${pt.tag_id})
+        ON CONFLICT DO NOTHING
+      `
+    )
+  );
+
+  return inserted;
+}
 
 export async function GET() {
   try {
-    // const result = await sql.begin((sql) => [
-    //   seedUsers(),
-    //   seedCustomers(),
-    //   seedInvoices(),
-    //   seedRevenue(),
-    // ]);
+    await seedUsers();
+    await seedClients();
+    await seedPractices();
+    await seedAppointments();
+    await seedPayments();
+    await seedTags();
+    await seedClientTags();
+    await seedPracticeTags();
 
     return Response.json({ message: 'Database seeded successfully' });
   } catch (error) {
     return Response.json({ error }, { status: 500 });
   }
 }
+

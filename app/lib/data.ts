@@ -6,6 +6,7 @@ import {
   InvoicesTable,
   LatestInvoiceRaw,
   Revenue,
+  Client,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -13,12 +14,6 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function fetchRevenue() {
   try {
-    // Artificially delay a response for demo purposes.
-    // Don't do this in production :)
-
-    console.log('Fetching revenue data...');
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
     const data = await sql<Revenue[]>`SELECT * FROM revenue`;
 
     console.log('Data fetch completed after 3 seconds.');
@@ -214,5 +209,24 @@ export async function fetchFilteredCustomers(query: string) {
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');
+  }
+}
+
+export async function fetchClients() {
+  try {
+    const clients = await sql<Client[]>`
+      SELECT
+        id
+        name
+        email
+        image_url
+      FROM clients
+      ORDER BY name ASC
+    `;
+    
+    return clients;
+  } catch (error) {
+    console.error('Database Error: ' + error);
+    throw new Error('Failed to fetch all customers');
   }
 }
