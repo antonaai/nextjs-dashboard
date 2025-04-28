@@ -4,6 +4,8 @@ import {
   UserGroupIcon,
   HomeIcon,
   DocumentDuplicateIcon,
+  DocumentCurrencyEuroIcon,
+  CalendarDaysIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -14,11 +16,13 @@ import clsx from 'clsx';
 const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
   {
-    name: 'Invoices',
+    name: 'Fatture',
     href: '/dashboard/invoices',
-    icon: DocumentDuplicateIcon,
+    icon: DocumentCurrencyEuroIcon,
   },
-  { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
+  { name: 'Clienti', href: '/dashboard/customers', icon: UserGroupIcon },
+  { name: 'Pratiche', href: '/dashboard/practices', icon: DocumentDuplicateIcon },
+  { name: 'Appuntamenti', href: '/dashboard/appointments', icon: CalendarDaysIcon }
 ];
 
 export default function NavLinks() {
@@ -33,9 +37,9 @@ export default function NavLinks() {
             key={link.name}
             href={link.href}
             className={clsx(
-              'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
+              'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-accent-primary-1 hover:text-white focus:bg-accent-primary-1 focus:text-white md:flex-none md:justify-start md:p-2 md:px-3 transition-all duration-500 ease-in-out',
               {
-                'bg-sky-100 text-blue-600': pathname === link.href
+                'active': pathname === link.href
               }
             )}
           >
