@@ -1,6 +1,6 @@
 import Table from '@/app/ui/customers/table';
 import { Suspense } from 'react';
-import { TableRowSkeleton } from '@/app/ui/skeletons';
+import { CustomersTableSkeleton } from '@/app/ui/skeletons';
 import { Metadata } from "next";
 import { fetchFilteredCustomers } from "@/app/lib/data";
 
@@ -19,7 +19,7 @@ export default async function Page(props: {
     const customers = await fetchFilteredCustomers(query);
 
     return (
-        <Suspense fallback={<TableRowSkeleton />}>
+        <Suspense fallback={<CustomersTableSkeleton />}>
             <Table customers={customers} />
         </Suspense>
     )

@@ -103,6 +103,20 @@ export type FormattedClientsTable = {
   total_practices: number
 }
 
+export type PracticesTableType = {
+  id: string;
+  practice_code?: string;
+  name: string;
+  description?: string;
+  price: number;
+  duration_min?: number;
+  status: 'open' | 'in_progress' | 'closed' | 'archived' | string;
+  type: 'civil' | 'criminal' | 'labor' | 'tax' | 'corporate' | 'family' | 'other' | string;
+  priority: 'low' | 'medium' | 'high' | 'urgent' | string;
+  created_at: 'string',
+  client_name: 'string',
+}
+
 export type FormattedCustomersTable = {
   id: string;
   name: string;
@@ -143,20 +157,34 @@ export type Client = {
   email?: string;
   phone?: string;
   notes?: string;
-  created_by?: string;
-  created_at: string;
-  updated_at?: string;
+  vat_number: string;
+  fiscal_code: string;
+  address: string;
+  zip_code: string;
+  city: string;
+  province: string;
+  country: string;
+  sdi_code: string;
+  pec_email: string;
+  contact_person: string;
+  type: string
 };
 
 // PRACTICES
 export type Practice = {
   id: string;
+  practice_code: string;
   name: string;
-  description?: string;
-  price?: number;
-  duration_min?: number;
-  created_at: string;
-  updated_at?: string;
+  description: string;
+  client_id: string;
+  price: number;
+  duration_min: number;
+  status: string;
+  type: string;
+  opening_date: string;
+  closing_date: string;
+  assigned_to: string;
+  priority: string;
 };
 
 // APPOINTMENTS
@@ -169,8 +197,6 @@ export type Appointment = {
   end_time?: string;
   status: 'confirmed' | 'canceled' | 'completed' | string;
   notes?: string;
-  created_at: string;
-  updated_at?: string;
 };
 
 // PAYMENTS

@@ -216,3 +216,112 @@ export function InvoicesTableSkeleton() {
     </div>
   );
 }
+
+export function CustomersTableSkeleton() {
+  return (
+    <div className="mt-6 flow-root">
+      <div className="inline-block min-w-full align-middle">
+        <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
+          <div className="md:hidden">
+            <InvoicesMobileSkeleton />
+            <InvoicesMobileSkeleton />
+            <InvoicesMobileSkeleton />
+            <InvoicesMobileSkeleton />
+            <InvoicesMobileSkeleton />
+            <InvoicesMobileSkeleton />
+          </div>
+          <table className="hidden min-w-full text-gray-900 md:table">
+            <thead className="rounded-lg text-left text-sm font-normal">
+              <tr>
+                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                  Nome
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Email
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  N. Pratiche
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Tot. Aperte
+                </th>
+                <th scope="col" className="px-4 py-5 font-medium">
+                  Tot. In Corso
+                </th>
+                <th scope="col" className="px-4 py-5 font-medium">
+                  Tot. Chiuse
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white">
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+export function PracticesTableSkeleton() {
+  return (
+    <div className="mt-6 flow-root">
+      <div className="inline-block min-w-full align-middle">
+        <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
+          <div className="md:hidden">
+            <InvoicesMobileSkeleton />
+            <InvoicesMobileSkeleton />
+            <InvoicesMobileSkeleton />
+            <InvoicesMobileSkeleton />
+            <InvoicesMobileSkeleton />
+            <InvoicesMobileSkeleton />
+          </div>
+          <table className="hidden min-w-full text-gray-900 md:table">
+            <thead className="rounded-lg text-left text-sm font-normal">
+              <tr>
+                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                    Pratica
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                    Codice pratica
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                    Prezzo
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                    Data
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                    Status
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                    Categoria
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                    Priorità
+                </th>
+                <th scope="col" className="relative py-3 pl-6 pr-3">
+                    <span className="sr-only">Modifica</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white">
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}

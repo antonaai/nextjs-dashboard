@@ -1,7 +1,7 @@
 import postgres from 'postgres';
 import {
   CustomerField,
-  CustomersTableType,
+  PracticesTableType,
   ClientsTableType,
   InvoiceForm,
   InvoicesTable,
@@ -10,6 +10,7 @@ import {
   Client,
 } from './definitions';
 import { formatCurrency } from './utils';
+const ITEMS_PER_PAGE = 6;
 
 const sql = postgres(process.env.LEXLY_SUPABASE_POSTGRES_URL!, { ssl: 'require' });
 
@@ -81,7 +82,6 @@ export async function fetchCardData() {
   }
 }
 
-const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
@@ -138,6 +138,27 @@ export async function fetchInvoicesPages(query: string) {
   }
 }
 
+export async function fetchPracticesPage(query: string) {
+  try {
+    const data = await sql`SELECT COUNT(*)
+    FROM practices
+    JOIN clients ON practices.client_id = clients.id
+    WHERE
+      clients.name ILIKE ${`%${query}%`} OR
+      clients.email ILIKE ${`%${query}%`} OR
+      practices.price::text ILIKE ${`%${query}%`} OR
+      practices.created_at::text ILIKE ${`%${query}%`} OR
+      practices.status ILIKE ${`%${query}%`}
+  `;
+
+    const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of practices.');
+  }
+}
+
 export async function fetchInvoiceById(id: string) {
   try {
     const data = await sql<InvoiceForm[]>`
@@ -177,6 +198,44 @@ export async function fetchCustomers() {
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch all customers.');
+  }
+}
+
+export async function fetchFilteredPractices(
+  query: string,
+  currentPage: number,
+) {
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+    const practices = await sql<PracticesTableType[]>`
+      SELECT
+        practices.id,
+        practices.practice_code,
+        practices.name,
+        practices.description,
+        practices.price,
+        practices.duration_min,
+        practices.status,
+        practices.type,
+        practices.priority,
+        practices.created_at,
+        clients.name AS client_name
+      FROM practices
+      LEFT JOIN clients ON practices.client_id = clients.id
+      WHERE
+        practices.name ILIKE ${`%${query}%`} OR
+        practices.practice_code ILIKE ${`%${query}%`} OR
+        clients.name ILIKE ${`%${query}%`} OR
+        clients.email ILIKE ${`%${query}%`}
+      ORDER BY practices.created_at DESC
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+    return practices;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Faild to fetch practices table');
   }
 }
 
