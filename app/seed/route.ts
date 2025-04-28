@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs"
 import postgres from 'postgres';
-import { users, clients, practices, appointments, payments, tags, client_tags, practice_tags } from '../lib/placeholder-data';
+import { users, clients, practices, appointments, payments, tags, client_tags, practice_tags, revenue } from '../lib/placeholder-data';
 
 const sql = postgres(process.env.LEXLY_SUPABASE_POSTGRES_URL!, { ssl: 'require' });
 
@@ -265,6 +265,32 @@ export async function seedPracticeTags() {
   return inserted;
 }
 
+export async function seedRevnue() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS revenue (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      month VARCHAR(3) NOT NULL,
+      revenue NUMERIC NOT NULL
+    );
+  `;
+
+  const insertedRevenues = await Promise.all(
+    revenue.map((rev) =>
+      sql`
+        INSERT INTO revenue (id, month, revenue)
+        VALUES (
+          ${rev.id},
+          ${rev.month},
+          ${rev.revenue}
+        )
+        ON CONFLICT (id) DO NOTHING
+      `
+    )
+  );
+
+  return insertedRevenues;
+}
+
 export async function GET() {
   try {
     await seedUsers();
@@ -275,6 +301,7 @@ export async function GET() {
     await seedTags();
     await seedClientTags();
     await seedPracticeTags();
+    await seedRevnue();
 
     return Response.json({ message: 'Database seeded successfully' });
   } catch (error) {

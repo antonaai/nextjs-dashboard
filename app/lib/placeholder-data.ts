@@ -516,6 +516,69 @@ const practice_tags = [
   },
 ];
 
+const revenue = [
+  {
+    id: 'c2e6a752-b9c3-4eb3-9be0-0f0e884fa7e3',
+    month: "Gen",
+    revenue: 2000
+  },
+  {
+    id: '4663a699-c64f-4868-b1c0-4d3dcf62ebb9',
+    month: "Feb",
+    revenue: 1800
+  },
+  {
+    id: '72295ee3-bfa1-44a6-b14d-9feb10b9e244',
+    month: "Mar",
+    revenue: 2200
+  },
+  {
+    id: '5c2afefd-184f-4bad-9b99-0879a835f137',
+    month: "Apr",
+    revenue: 2500
+  },
+  {
+    id: '1c4e5e31-bb1b-4e50-a260-8b610edfab2a',
+    month: "Mag",
+    revenue: 2300
+  },
+  {
+    id: '73e12231-3426-4892-a53b-8a375722dc70',
+    month: "Giu",
+    revenue: 3200
+  },
+  {
+    id: '39300df9-0ca3-434d-8cfb-86306ebbbcb3',
+    month: "Lug",
+    revenue: 3500
+  },
+  {
+    id: '5665b065-15f6-416d-9c2e-8c0e09172a57',
+    month: "Ago",
+    revenue: 3700
+  },
+  {
+    id: '5fdeae9e-77af-4a4a-9ad5-2abd3f2c72d8',
+    month: "Set",
+    revenue: 2500
+  },
+  {
+    id: '57a7d85c-5d9c-4fc4-abb5-7df8f3903405',
+    month: "Ott",
+    revenue: 2800
+  },
+  {
+    id: '8c029deb-3d47-4b4b-8fdb-80401da58629',
+    month: "Nov",
+    revenue: 3000
+  },
+  {
+    id: 'dd8f309a-ae98-44ac-b9c3-2c7221efead2',
+    month: "Dic",
+    revenue: 4800
+  },
+];
+
 export {
   users,
   clients,
@@ -524,5 +587,6 @@ export {
   payments,
   tags,
   client_tags,
-  practice_tags
+  practice_tags,
+  revenue
 };
