@@ -1,14 +1,13 @@
-import Image from 'next/image';
 import { playfairDisplay } from '@/app/ui/fonts';
 import Search from '@/app/ui/search';
 import {
-  FormattedCustomersTable,
+  FormattedClientsTable,
 } from '@/app/lib/definitions';
 
 export default async function CustomersTable({
   customers,
 }: {
-  customers: FormattedCustomersTable[];
+  customers: FormattedClientsTable[];
 }) {
   return (
     <div className="w-full">
@@ -30,13 +29,6 @@ export default async function CustomersTable({
                       <div>
                         <div className="mb-2 flex items-center">
                           <div className="flex items-center gap-3">
-                            <Image
-                              src={customer.image_url}
-                              className="rounded-full"
-                              alt={`Foto profilo di ${customer.name}`}
-                              width={28}
-                              height={28}
-                            />
                             <p>{customer.name}</p>
                           </div>
                         </div>
@@ -47,16 +39,16 @@ export default async function CustomersTable({
                     </div>
                     <div className="flex w-full items-center justify-between border-b py-5">
                       <div className="flex w-1/2 flex-col">
-                        <p className="text-xs">Da riscuotere</p>
-                        <p className="font-medium">{customer.total_pending}</p>
+                        <p className="text-xs">Tot. Aperte</p>
+                        <p className="font-medium">{customer.total_open}</p>
                       </div>
                       <div className="flex w-1/2 flex-col">
-                        <p className="text-xs">Riscossi</p>
-                        <p className="font-medium">{customer.total_paid}</p>
+                        <p className="text-xs">Tot. in Corso</p>
+                        <p className="font-medium">{customer.total_in_progress}</p>
                       </div>
                     </div>
                     <div className="pt-4 text-sm">
-                      <p>{customer.total_invoices} fatture totali</p>
+                      <p>{customer.total_closed} Tot. Chiuse</p>
                     </div>
                   </div>
                 ))}
@@ -71,13 +63,16 @@ export default async function CustomersTable({
                       Email
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      N. Fatture
+                      N. Pratiche
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Totale da pagre
+                      Tot. Aperte
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Totale pagato
+                      Tot. In Corso
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
+                      Tot. Chiuse
                     </th>
                   </tr>
                 </thead>
@@ -87,13 +82,6 @@ export default async function CustomersTable({
                     <tr key={customer.id} className="group">
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <Image
-                            src={customer.image_url}
-                            className="rounded-full"
-                            alt={`${customer.name}'s profile picture`}
-                            width={28}
-                            height={28}
-                          />
                           <p>{customer.name}</p>
                         </div>
                       </td>
@@ -101,13 +89,16 @@ export default async function CustomersTable({
                         {customer.email}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.total_invoices}
+                        {customer.total_practices}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.total_pending}
+                        {customer.total_open}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                        {customer.total_in_progress}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {customer.total_paid}
+                        {customer.total_closed}
                       </td>
                     </tr>
                   ))}

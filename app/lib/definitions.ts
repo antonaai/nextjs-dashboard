@@ -58,6 +58,51 @@ export type CustomersTableType = {
   total_paid: number;
 };
 
+export type ClientType = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string,
+  notes?: string,
+  vat_number?: string,
+  fiscal_code?: string,
+  address: string,
+  zip_code: string,
+  city: string,
+  province: string,
+  country: string,
+  sdi_code?: string,
+  pec_email?: string,
+  contact_person?: string,
+  type: string,
+  created_by: string, 
+  created_at?: string,
+};
+
+export type ClientsTableType = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string,
+  type: string,
+  total_open: number,
+  total_in_progress: number,
+  total_closed: number,
+  total_practices: number
+};
+
+export type FormattedClientsTable = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string,
+  type: string,
+  total_open: string,
+  total_in_progress: string,
+  total_closed: string,
+  total_practices: number
+}
+
 export type FormattedCustomersTable = {
   id: string;
   name: string;

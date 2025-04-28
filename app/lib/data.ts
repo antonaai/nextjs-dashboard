@@ -2,6 +2,7 @@ import postgres from 'postgres';
 import {
   CustomerField,
   CustomersTableType,
+  ClientsTableType,
   InvoiceForm,
   InvoicesTable,
   LatestInvoiceRaw,
@@ -10,7 +11,7 @@ import {
 } from './definitions';
 import { formatCurrency } from './utils';
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+const sql = postgres(process.env.LEXLY_SUPABASE_POSTGRES_URL!, { ssl: 'require' });
 
 export async function fetchRevenue() {
   try {
@@ -181,31 +182,35 @@ export async function fetchCustomers() {
 
 export async function fetchFilteredCustomers(query: string) {
   try {
-    const data = await sql<CustomersTableType[]>`
+    const data = await sql<ClientsTableType[]>`
 		SELECT
-		  customers.id,
-		  customers.name,
-		  customers.email,
-		  customers.image_url,
-		  COUNT(invoices.id) AS total_invoices,
-		  SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
-		  SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
-		FROM customers
-		LEFT JOIN invoices ON customers.id = invoices.customer_id
+		  clients.id,
+		  clients.name,
+		  clients.email,
+      clients.phone,
+      clients.type,
+      COUNT(practices.id) AS total_practices,
+		  SUM(CASE WHEN practices.status = 'open' THEN practices.price ELSE 0 END) AS total_open,
+		  SUM(CASE WHEN practices.status = 'in_progress' THEN practices.price ELSE 0 END) AS total_in_progress,
+		  SUM(CASE WHEN practices.status = 'closed' THEN practices.price ELSE 0 END) AS total_closed
+		FROM clients
+		LEFT JOIN practices ON clients.id = practices.client_id
 		WHERE
-		  customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`}
-		GROUP BY customers.id, customers.name, customers.email, customers.image_url
-		ORDER BY customers.name ASC
+		  clients.name ILIKE ${`%${query}%`} OR
+      clients.email ILIKE ${`%${query}%`}
+		GROUP BY clients.id, clients.name, clients.email, clients.phone, clients.type
+		ORDER BY clients.name ASC
 	  `;
 
-    const customers = data.map((customer) => ({
-      ...customer,
-      total_pending: formatCurrency(customer.total_pending),
-      total_paid: formatCurrency(customer.total_paid),
+    const clients = data.map((client) => ({
+      ...client,
+      total_open: formatCurrency(client.total_open),
+      total_in_progress: formatCurrency(client.total_in_progress),
+      total_closed: formatCurrency(client.total_closed),
+      total_practices: client.total_practices
     }));
 
-    return customers;
+    return clients;
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');
