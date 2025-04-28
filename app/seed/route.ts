@@ -40,17 +40,39 @@ export async function seedClients() {
       email TEXT,
       phone TEXT,
       notes TEXT,
+      vat_number TEXT,
+      fiscal_code TEXT,
+      address TEXT,
+      zip_code TEXT,
+      city TEXT,
+      province TEXT,
+      country TEXT DEFAULT 'Italia',
+      sdi_code TEXT,
+      pec_email TEXT,
+      contact_person TEXT,
+      type TEXT DEFAULT 'individual',
       created_by UUID REFERENCES users(id) ON DELETE SET NULL,
       created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-      updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+      CONSTRAINT clients_type_check CHECK (type IN ('individual', 'company'))
     );
   `;
 
   const insertedClients = await Promise.all(
     clients.map((client) =>
       sql`
-        INSERT INTO clients (id, name, email, phone, notes, created_by, created_at)
-        VALUES (${client.id}, ${client.name}, ${client.email}, ${client.phone}, ${client.notes}, ${client.created_by}, ${client.created_at})
+        INSERT INTO clients (
+          id, name, email, phone, notes,
+          vat_number, fiscal_code, address, zip_code, city, province, country,
+          sdi_code, pec_email, contact_person, type,
+          created_by, created_at
+        )
+        VALUES (
+          ${client.id}, ${client.name}, ${client.email}, ${client.phone}, ${client.notes},
+          ${client.vat_number}, ${client.fiscal_code}, ${client.address}, ${client.zip_code}, ${client.city}, ${client.province}, ${client.country},
+          ${client.sdi_code}, ${client.pec_email}, ${client.contact_person}, ${client.type},
+          ${client.created_by}, ${client.created_at}
+        )
         ON CONFLICT (id) DO NOTHING
       `
     )
@@ -63,24 +85,45 @@ export async function seedPractices() {
   await sql`
     CREATE TABLE IF NOT EXISTS practices (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      practice_code TEXT UNIQUE,
       name TEXT NOT NULL,
       description TEXT,
+      client_id UUID REFERENCES clients(id) ON DELETE SET NULL,
       price NUMERIC,
       duration_min INTEGER,
+      status TEXT DEFAULT 'open',
+      type TEXT DEFAULT 'civil',
+      opening_date DATE,
+      closing_date DATE,
+      assigned_to UUID REFERENCES users(id) ON DELETE SET NULL,
+      priority TEXT DEFAULT 'medium',
       created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-      updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+      CONSTRAINT practices_status_check CHECK (status IN ('open', 'in_progress', 'closed', 'archived')),
+      CONSTRAINT practices_type_check CHECK (type IN ('civil', 'criminal', 'labor', 'tax', 'corporate', 'family', 'other')),
+      CONSTRAINT practices_priority_check CHECK (priority IN ('low', 'medium', 'high', 'urgent'))
     );
   `;
 
   const insertedPractices = await Promise.all(
     practices.map((practice) =>
       sql`
-        INSERT INTO practices (id, name, description, price, duration_min, created_at)
-        VALUES (${practice.id}, ${practice.name}, ${practice.description}, ${practice.price}, ${practice.duration_min}, ${practice.created_at})
+        INSERT INTO practices (
+          id, practice_code, name, description, client_id,
+          price, duration_min, status, type, opening_date,
+          closing_date, assigned_to, priority, created_at
+        )
+        VALUES (
+          ${practice.id}, ${practice.practice_code}, ${practice.name}, ${practice.description}, ${practice.client_id},
+          ${practice.price}, ${practice.duration_min}, ${practice.status}, ${practice.type}, ${practice.opening_date},
+          ${practice.closing_date}, ${practice.assigned_to}, ${practice.priority}, ${practice.created_at}
+        )
         ON CONFLICT (id) DO NOTHING
       `
     )
   );
+
+  return insertedPractices;
 }
 
 export async function seedAppointments() {
