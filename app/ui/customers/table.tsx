@@ -13,9 +13,9 @@ export default async function CustomersTable({
   return (
     <div className="w-full">
       <h1 className={`${playfairDisplay.className} mb-8 text-xl md:text-2xl`}>
-        Customers
+        Clienti
       </h1>
-      <Search placeholder="Search customers..." />
+      <Search placeholder="Cerca clienti..." />
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -33,7 +33,7 @@ export default async function CustomersTable({
                             <Image
                               src={customer.image_url}
                               className="rounded-full"
-                              alt={`${customer.name}'s profile picture`}
+                              alt={`Foto profilo di ${customer.name}`}
                               width={28}
                               height={28}
                             />
@@ -47,16 +47,16 @@ export default async function CustomersTable({
                     </div>
                     <div className="flex w-full items-center justify-between border-b py-5">
                       <div className="flex w-1/2 flex-col">
-                        <p className="text-xs">Pending</p>
+                        <p className="text-xs">Da riscuotere</p>
                         <p className="font-medium">{customer.total_pending}</p>
                       </div>
                       <div className="flex w-1/2 flex-col">
-                        <p className="text-xs">Paid</p>
+                        <p className="text-xs">Riscossi</p>
                         <p className="font-medium">{customer.total_paid}</p>
                       </div>
                     </div>
                     <div className="pt-4 text-sm">
-                      <p>{customer.total_invoices} invoices</p>
+                      <p>{customer.total_invoices} fatture totali</p>
                     </div>
                   </div>
                 ))}
@@ -65,19 +65,19 @@ export default async function CustomersTable({
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                      Name
+                      Nome
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
                       Email
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Total Invoices
+                      N. Fatture
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Total Pending
+                      Totale da pagre
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Total Paid
+                      Totale pagato
                     </th>
                   </tr>
                 </thead>
