@@ -19,10 +19,8 @@ export default async function Page(props: {
     const customers = await fetchFilteredCustomers(query);
 
     return (
-        <div className="w-full">
-            <Suspense fallback={<TableRowSkeleton />}>
-                <Table customers={customers} />
-            </Suspense>
-        </div>
+        <Suspense fallback={<TableRowSkeleton />}>
+            <Table customers={customers} />
+        </Suspense>
     )
 }
