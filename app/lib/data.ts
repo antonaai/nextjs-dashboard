@@ -5,6 +5,7 @@ import {
   ClientsTableType,
   InvoiceForm,
   InvoicesTable,
+  PaymentsTable,
   LatestInvoiceRaw,
   Revenue,
   Client,
@@ -117,6 +118,40 @@ export async function fetchFilteredInvoices(
   }
 }
 
+export async function fetchFilteredPayments(
+  query: string,
+  currentPage: number,
+) {
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+    const payments = await sql<PaymentsTable[]>`
+      SELECT
+        payments.id,
+        payments.amount,
+        payments.method,
+        payments.paid_at AS date,
+        payments.notes,
+        clients.name,
+        clients.email
+      FROM payments
+      JOIN clients ON payments.client_id = clients.id
+      WHERE
+        clients.name ILIKE ${`%${query}%`} OR
+        clients.email ILIKE ${`%${query}%`} OR
+        payments.amount::text ILIKE ${`%${query}%`} OR
+        payments.method ILIKE ${`%${query}%`}
+      ORDER BY payments.paid_at DESC
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+    return payments;
+  } catch (error) {
+    console.error('Database Error: ', error);
+    throw new Error('Failed to fetch payments.');
+  }
+}
+
 export async function fetchInvoicesPages(query: string) {
   try {
     const data = await sql`SELECT COUNT(*)
@@ -135,6 +170,27 @@ export async function fetchInvoicesPages(query: string) {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch total number of invoices.');
+  }
+}
+
+export async function fetchPaymentsPages(query: string) {
+  try {
+    const data = await sql`SELECT COUNT(*)
+    FROM payments
+    JOIN clients ON payments.client_id = clients.id
+    WHERE
+      clients.name ILIKE ${`%${query}%`} OR
+      clients.email ILIKE ${`%${query}%`} OR
+      payments.amount::text ILIKE ${`%${query}%`} OR
+      payments.notes ILIKE ${`%${query}%`}
+    `;
+
+    const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+
+  } catch (error) {
+    console.error('Database Error: ', error);
+    throw new Error('Failed to fetch total number of payments.');
   }
 }
 
