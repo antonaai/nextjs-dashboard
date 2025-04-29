@@ -32,7 +32,7 @@ async function seedUsers() {
   return insertedUsers;
 }
 
-export async function seedClients() {
+async function seedClients() {
   await sql`
     CREATE TABLE IF NOT EXISTS clients (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -81,7 +81,7 @@ export async function seedClients() {
   return insertedClients;
 }
 
-export async function seedPractices() {
+async function seedPractices() {
   await sql`
     CREATE TABLE IF NOT EXISTS practices (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -126,7 +126,7 @@ export async function seedPractices() {
   return insertedPractices;
 }
 
-export async function seedAppointments() {
+async function seedAppointments() {
   await sql`
     CREATE TABLE IF NOT EXISTS appointments (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -165,7 +165,7 @@ export async function seedAppointments() {
   return insertedAppointments;
 }
 
-export async function seedPayments() {
+async function seedPayments() {
   await sql`
     CREATE TABLE IF NOT EXISTS payments (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -199,7 +199,7 @@ export async function seedPayments() {
   return insertedPayments;
 }
 
-export async function seedTags() {
+async function seedTags() {
   await sql`
     CREATE TABLE IF NOT EXISTS tags (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -221,7 +221,7 @@ export async function seedTags() {
   return insertedTags;
 }
 
-export async function seedClientTags() {
+async function seedClientTags() {
   await sql`
     CREATE TABLE IF NOT EXISTS client_tags (
       client_id UUID REFERENCES clients(id) ON DELETE CASCADE,
@@ -243,7 +243,7 @@ export async function seedClientTags() {
   return inserted;
 }
 
-export async function seedPracticeTags() {
+async function seedPracticeTags() {
   await sql`
     CREATE TABLE IF NOT EXISTS practice_tags (
       practice_id UUID REFERENCES practices(id) ON DELETE CASCADE,
@@ -265,7 +265,7 @@ export async function seedPracticeTags() {
   return inserted;
 }
 
-export async function seedRevnue() {
+async function seedRevnue() {
   await sql`
     CREATE TABLE IF NOT EXISTS revenue (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
