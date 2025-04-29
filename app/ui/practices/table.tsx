@@ -41,10 +41,10 @@ export default async function PracticesTable({
                         </p>
                         <p>{formatDateToLocal(practice.created_at)}</p>
                         </div>
-                        <div className="flex justify-end gap-2">
-                        {/* <UpdateInvoice id={practice.id} />
-                        <DeleteInvoice id={practice.id} /> */}
-                        </div>
+                        {/* <div className="flex justify-end gap-2">
+                        <UpdateInvoice id={practice.id} />
+                        <DeleteInvoice id={practice.id} />
+                        </div> */}
                     </div>
                     </div>
                 ))}
@@ -73,9 +73,9 @@ export default async function PracticesTable({
                     <th scope="col" className="px-3 py-5 font-medium">
                         Priorità
                     </th>
-                    <th scope="col" className="relative py-3 pl-6 pr-3">
+                    {/* <th scope="col" className="relative py-3 pl-6 pr-3">
                         <span className="sr-only">Modifica</span>
-                    </th>
+                    </th> */}
                     </tr>
                 </thead>
                 <tbody className="bg-white">

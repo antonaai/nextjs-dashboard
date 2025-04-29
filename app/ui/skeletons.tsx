@@ -357,9 +357,9 @@ export function PracticesTableSkeleton() {
                 <th scope="col" className="px-3 py-5 font-medium">
                     Priorità
                 </th>
-                <th scope="col" className="relative py-3 pl-6 pr-3">
+                {/* <th scope="col" className="relative py-3 pl-6 pr-3">
                     <span className="sr-only">Modifica</span>
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody className="bg-white">

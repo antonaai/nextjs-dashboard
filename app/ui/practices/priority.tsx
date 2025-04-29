@@ -6,10 +6,10 @@ export default function PracticePriority({ priority }: { priority: string}) {
         className={clsx(
             'inline-flex items-center rounded-full px-2 py-1 text-xs',
             {
-                'bg-red-400 text-white': priority === 'urgent',
-                'bg-orange-400 text-white': priority === 'high',
-                'bg-yellow-200 text-black': priority === 'medium',
-                'bg-green-500 text-white': priority === 'low',
+                'bg-red-200': priority === 'urgent',
+                'bg-orange-200': priority === 'high',
+                'bg-yellow-200': priority === 'medium',
+                'bg-blue-200': priority === 'low',
             },
         )}>
             {priority === 'urgent' ? (
