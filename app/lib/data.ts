@@ -7,6 +7,7 @@ import {
   InvoicesTable,
   PaymentsTable,
   LatestInvoiceRaw,
+  LatestPaymentsRaw,
   Revenue,
   Client,
 } from './definitions';
@@ -48,34 +49,56 @@ export async function fetchLatestInvoices() {
   }
 }
 
+export async function fetchLatestPayments() {
+  try {
+    const data = await sql<LatestPaymentsRaw[]>`
+      SELECT payments.amount, clients.name, clients.email, payments.id
+      FROM payments
+      JOIN clients ON payments.client_id = clients.id
+      ORDER BY payments.paid_at DESC
+      LIMIT 5
+    `;
+
+    const latestPayments = data.map((invoice) => ({
+      ...invoice,
+      amount: formatCurrency(invoice.amount),
+    }));
+    return latestPayments;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch latest payments.');
+  }
+}
+
 export async function fetchCardData() {
   try {
-    // You can probably combine these into a single SQL query
-    // However, we are intentionally splitting them to demonstrate
-    // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
-    const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
-    const invoiceStatusPromise = sql`SELECT
-         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-         FROM invoices`;
+    const paymentsCountPromise = sql`SELECT COUNT(*) FROM payments`;
+    const clientsCountPromise = sql`SELECT COUNT(*) FROM clients`;
+    const practicesStatusPromise = sql`SELECT
+         SUM(CASE WHEN status = 'open' THEN price ELSE 0 END) AS "open",
+         SUM(CASE WHEN status = 'in_progress' THEN price ELSE 0 END) AS "in_progress",
+         SUM(CASE WHEN status = 'closed' THEN price ELSE 0 END) AS "closed"
+         FROM practices`;
 
     const data = await Promise.all([
-      invoiceCountPromise,
-      customerCountPromise,
-      invoiceStatusPromise,
+      paymentsCountPromise,
+      clientsCountPromise,
+      practicesStatusPromise,
     ]);
 
-    const numberOfInvoices = Number(data[0][0].count ?? '0');
-    const numberOfCustomers = Number(data[1][0].count ?? '0');
-    const totalPaidInvoices = formatCurrency(data[2][0].paid ?? '0');
-    const totalPendingInvoices = formatCurrency(data[2][0].pending ?? '0');
+    const numberOfPayments = Number(data[0][0].count ?? '0');
+    const numberOfClients = Number(data[1][0].count ?? '0');
+    const totalOpenPractices = formatCurrency(data[2][0].open ?? '0');
+    const totalInProgressPractices = formatCurrency(data[2][0].in_progress ?? '0');
+    const totalClosedPractices = formatCurrency(data[2][0].closed ?? '0');
+    
 
     return {
-      numberOfCustomers,
-      numberOfInvoices,
-      totalPaidInvoices,
-      totalPendingInvoices,
+      numberOfPayments,
+      numberOfClients,
+      totalOpenPractices,
+      totalInProgressPractices,
+      totalClosedPractices
     };
   } catch (error) {
     console.error('Database Error:', error);

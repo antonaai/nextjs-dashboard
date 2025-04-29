@@ -33,7 +33,18 @@ export type LatestInvoice = {
   amount: string;
 };
 
+export type LatestPayment = {
+  id: string;
+  name: string;
+  email: string;
+  amount: string;
+}
+
 export type LatestInvoiceRaw = Omit<LatestInvoice, 'amount'> & {
+  amount: number;
+};
+
+export type LatestPaymentsRaw = Omit<LatestPayment, 'amount'> & {
   amount: number;
 };
 
