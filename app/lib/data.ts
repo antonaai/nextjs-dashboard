@@ -18,14 +18,20 @@ const sql = postgres(process.env.LEXLY_SUPABASE_POSTGRES_URL!, { ssl: 'require' 
 
 export async function fetchRevenue() {
   try {
-    const data = await sql<Revenue[]>`SELECT * FROM revenue`;
-
-    console.log('Data fetch completed after 3 seconds.');
+    const data = await sql<Revenue[]>`
+    SELECT
+      TO_CHAR(paid_at, 'Mon') AS month,
+      SUM(amount) AS revenue
+    FROM payments
+    WHERE paid_at >= (CURRENT_DATE - INTERVAL '12 months')
+    GROUP BY TO_CHAR(paid_at, 'Mon'), EXTRACT(MONTH FROM paid_at)
+    ORDER BY EXTRACT(MONTH FROM paid_at);
+    `;
 
     return data;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
+    console.error('Database Error: ', error);
+    throw new Error('Failed to fetch revenue data');
   }
 }
 
