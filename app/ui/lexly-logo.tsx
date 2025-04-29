@@ -5,11 +5,10 @@ export default function LexlyLogo() {
         <div className="flex justify-center w-full h-full">
             <Image
                 src="/logo-white.png"
-                width={240}
+                width={160}
                 height={160}
                 className="w-auto"
                 alt="Lexly Logo - CRM per avvocati e studi legali"
-                loading="lazy"
             />
             {/* <p className="text-[44px]">Lexly</p> */}
         </div>
