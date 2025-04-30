@@ -4,11 +4,11 @@ import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import postgres from 'postgres';
-import { signIn } from '@/auth';
+import { signIn, auth } from '@/auth';
 import { AuthError } from 'next-auth';
 
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+const sql = postgres(process.env.LEXLY_SUPABASE_POSTGRES_URL!, { ssl: 'require' });
 
 const FormSchema = z.object({
     id: z.string(),
@@ -27,6 +27,71 @@ export type State = {
         customerId?: string[];
         amount?: string[];
         status?: string[];
+    };
+    message?: string | null;
+}
+
+const ClientFormSchema = z.object({
+    name: z.string({
+        invalid_type_error: 'Per favore inserisci un nome valido.',
+        required_error: 'Per favore inserisci un nome.',
+    }),
+    email: z.string({
+        invalid_type_error: 'Per favore inserisci un indrizzo email valido.',
+        required_error: 'Per favore inserisci un indirizzo email.',
+    }),
+    phone: z.string({
+        invalid_type_error: 'Per favore inserisci un numero di telefono valido.',
+        required_error: 'Per favore inserisci un numero di telefono.',
+    }),
+    notes: z.string().nullish(),
+    vat_number: z.string().nullish(),
+    fiscal_code: z.string().nullish(),
+    address: z.string({
+        invalid_type_error: 'Per favore inserisci un indirizzo valido.',
+        required_error: 'Per favore inserisci un indirizzo.',
+    }),
+    zip_code: z.string({
+        invalid_type_error: 'Per favore inserisci uno zip code valido.',
+        required_error: 'Per favore inserisci uno zip code.',
+    }),
+    city: z.string({
+        invalid_type_error: 'Per favore inserisci una città valida.',
+        required_error: 'Per favore inserisci una città.',
+    }),
+    province: z.string({
+        invalid_type_error: 'Per favore inserisci una provincia valida.',
+        required_error: 'Per favore inserisci una provincia.',
+    }),
+    country: z.string({
+        invalid_type_error: 'Per favore inserisci una nazione valida.',
+        required_error: 'Per favore inserisci una nazione.',
+    }),
+    sdi_code: z.string().nullish(),
+    pec_email: z.string().nullish(),
+    contact_person: z.string().nullish(),
+    type: z.enum(['individual', 'company'], {
+        invalid_type_error: 'Per favore inserisci un tipo di cliente valido.',
+    })
+});
+
+export type ClientState = {
+    errors?: {
+        name?: string[];
+        email?: string[];
+        phone?: string[];
+        notes?: string[];
+        vat_number?: string[];
+        fiscal_code?: string[];
+        address?: string[];
+        zip_code?: string[];
+        city?: string[];
+        province?: string[];
+        country?: string[];
+        sdi_code?: string[];
+        pec_email?: string[];
+        contact_person?: string[];
+        type?: string[];
     };
     message?: string | null;
 }
@@ -66,6 +131,78 @@ export async function createInvoice(prevState: State, formData: FormData) {
 
     revalidatePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
+}
+
+export async function createClient(prevState: ClientState | undefined, formData: FormData) {
+    const validatedFields = ClientFormSchema.safeParse({
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('name'),
+        notes: formData.get('notes'),
+        vat_number: formData.get('vat_number'),
+        fiscal_code: formData.get('fiscal_code'),
+        address: formData.get('address'),
+        zip_code: formData.get('zip_code'),
+        city: formData.get('city'),
+        province: formData.get('province'),
+        country: formData.get('country'),
+        sdi_code: formData.get('sdi_code'),
+        pec_email: formData.get('pec_email'),
+        contact_person: formData.get('contact_person'),
+        type: formData.get('type'),
+    });
+
+    if (!validatedFields.success) {
+        console.log(validatedFields);
+
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Campi mancanti. Non sono riuscito ad aggiungere il cliente richiesto.',
+        };
+    }
+
+    const { 
+        name,
+        email,
+        phone,
+        notes,
+        vat_number,
+        fiscal_code,
+        address,
+        zip_code,
+        city,
+        province,
+        country,
+        sdi_code,
+        pec_email,
+        contact_person,
+        type,
+    } = validatedFields.data;
+
+    const created_at = new Date().toISOString().split('T')[0];
+
+    try {
+        const session = await auth();
+
+        if (!session?.user || !session?.user.email) {
+            redirect('/login');
+        }
+
+        const created_by = session.user.id;
+
+        if (!created_by) {
+            throw new Error('No user id found');
+        }
+
+        await sql`
+        INSERT INTO clients (name, email, phone, notes, vat_number, fiscal_code, address, zip_code, city, province, country, sdi_code, pec_email, contact_person, type, created_at, created_by)
+        VALUES (${name}, ${email}, ${phone}, ${notes ?? null}, ${vat_number ?? null}, ${fiscal_code ?? null}, ${address}, ${zip_code}, ${city}, ${province}, ${country}, ${sdi_code ?? null}, ${pec_email ?? null}, ${contact_person ?? null}, ${type}, ${created_at}, ${created_by ?? null})
+        `;
+    } catch (error) {
+        return {
+            message: `Database Error - failed to Create Client - ${error}`
+        }
+    }
 }
 
 export async function updateInvoice(id: string, formData: FormData) {

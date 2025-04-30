@@ -3,6 +3,7 @@ import Search from '@/app/ui/search';
 import {
   FormattedClientsTable,
 } from '@/app/lib/definitions';
+import { CreateClient } from '@/app/ui/customers/buttons';
 
 export default async function CustomersTable({
   customers,
@@ -14,7 +15,10 @@ export default async function CustomersTable({
       <h1 className={`${playfairDisplay.className} mb-8 text-xl md:text-2xl`}>
         Clienti
       </h1>
-      <Search placeholder="Cerca clienti..." />
+      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+        <Search placeholder="Cerca clienti..." />
+        <CreateClient />
+      </div>
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">

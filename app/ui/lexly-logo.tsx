@@ -9,6 +9,7 @@ export default function LexlyLogo() {
                 height={160}
                 className="w-auto"
                 alt="Lexly Logo - CRM per avvocati e studi legali"
+                priority={true}
             />
             {/* <p className="text-[44px]">Lexly</p> */}
         </div>
