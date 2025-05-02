@@ -13,7 +13,7 @@ export function CreateClient() {
     );
 }
 
-export function UpdateClient() {
+export function UpdateClient({ id }: { id: string}) {
     return (
         <Link
             href={`/dashboard/customers/${id}/edit`}
