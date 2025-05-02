@@ -6,7 +6,7 @@ import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcryptjs';
 import postgres from 'postgres';
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+const sql = postgres(process.env.LEXLY_SUPABASE_POSTGRES_URL!, { ssl: 'require' });
 
 async function getUser(email: string) : Promise<User | undefined> {
     try {
@@ -31,7 +31,7 @@ export const { auth, signIn, signOut } = NextAuth({
             const { email, password } = parsedCredentials.data;
             const user = await getUser(email);
             if (!user) return null;
-            const passwordsMatch = await bcrypt.compare(password, user.password);
+            const passwordsMatch = await bcrypt.compare(password, user.password_hash);
 
             if (passwordsMatch) return user;
           }

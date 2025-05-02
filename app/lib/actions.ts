@@ -203,6 +203,9 @@ export async function createClient(prevState: ClientState | undefined, formData:
             message: `Database Error - failed to Create Client - ${error}`
         }
     }
+
+    revalidatePath('/dashboard/customers');
+    redirect('/dashboard/customers');
 }
 
 export async function updateInvoice(id: string, formData: FormData) {

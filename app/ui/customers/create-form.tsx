@@ -321,7 +321,7 @@ export default function Form() {
                                     <input
                                         id="vatNumber"
                                         name="vat_number"
-                                        type="email"
+                                        type="text"
                                         placeholder="Inserisci la P.IVA del cliente"
                                         className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                                         aria-describedby="vatNumber-error"
@@ -398,7 +398,7 @@ export default function Form() {
                                     <input
                                         id="contactPerson"
                                         name="contact_person"
-                                        type="email"
+                                        type="text"
                                         placeholder="Inserisci il nome del referente aziendale"
                                         className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                                         aria-describedby="contactPerson-error"
