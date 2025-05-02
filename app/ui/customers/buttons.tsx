@@ -1,5 +1,6 @@
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { deleteClient } from '@/app/lib/actions';
 
 export function CreateClient() {
     return (
@@ -24,17 +25,17 @@ export function UpdateClient({ id }: { id: string}) {
     )
 }
 
-// export function DeleteClient({ id }: { id: string }) {
-//     const deleteClientWithId = deleteClient.bind(null, id);
+export function DeleteClient({ id }: { id: string }) {
+    const deleteClientWithId = deleteClient.bind(null, id);
 
-//     return (
-//         <form action={deleteClientWithId}>
-//             <button type="submit" className="rounded-md border p-2 hover:bg-gray-100">
-//                 <span className="sr-only">
-//                     Delete
-//                 </span>
-//                 <TrashIcon className="w-5" />
-//             </button>
-//         </form>
-//     )
-// }
+    return (
+        <form action={deleteClientWithId}>
+            <button type="submit" className="rounded-md border p-2 hover:bg-gray-100">
+                <span className="sr-only">
+                    Elimina il cliente di questa riga
+                </span>
+                <TrashIcon className="w-5" />
+            </button>
+        </form>
+    )
+}

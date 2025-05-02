@@ -3,7 +3,7 @@ import Search from '@/app/ui/search';
 import {
   FormattedClientsTable,
 } from '@/app/lib/definitions';
-import { CreateClient } from '@/app/ui/customers/buttons';
+import { CreateClient, UpdateClient, DeleteClient } from '@/app/ui/customers/buttons';
 
 export default async function CustomersTable({
   customers,
@@ -54,6 +54,11 @@ export default async function CustomersTable({
                     <div className="pt-4 text-sm">
                       <p>{customer.total_closed} Tot. Chiuse</p>
                     </div>
+
+                    <div className="flex justify-end gap-2">
+                      <UpdateClient id={customer.id} />
+                      <DeleteClient id={customer.id} />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -78,16 +83,17 @@ export default async function CustomersTable({
                     <th scope="col" className="px-4 py-5 font-medium">
                       Tot. Chiuse
                     </th>
+                    <th scope="col" className="relative py-3 pl-6 pr-3">
+                      <span className="sr-only">Edit</span>
+                    </th>
                   </tr>
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
                   {customers.map((customer) => (
                     <tr key={customer.id} className="group">
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          <p>{customer.name}</p>
-                        </div>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm sm:pl-6">
+                        <p>{customer.name}</p>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {customer.email}
@@ -101,8 +107,14 @@ export default async function CustomersTable({
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {customer.total_in_progress}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {customer.total_closed}
+                      </td>
+                      <td className="whitespace-nowrap bg-white py-3 pl-6 pr-3">
+                        <div className="flex justify-end gap-3">
+                          <UpdateClient id={customer.id} />
+                          <DeleteClient id={customer.id} />
+                        </div>
                       </td>
                     </tr>
                   ))}
