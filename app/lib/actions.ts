@@ -231,6 +231,44 @@ export async function updateInvoice(id: string, formData: FormData) {
     redirect('/dashboard/invoices');
 }
 
+export async function updateClient(id: string, formData: FormData) {
+    const validatedFields = ClientFormSchema.safeParse({
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        notes: formData.get('notes'),
+        vat_number: formData.get('vat_number'),
+        fiscal_code: formData.get('fiscal_code'),
+        address: formData.get('address'),
+        zip_code: formData.get('zip_code'),
+        city: formData.get('city'),
+        province: formData.get('province'),
+        country: formData.get('country'),
+        sdi_code: formData.get('sdi_code'),
+        pec_email: formData.get('pec_email'),
+        contact_person: formData.get('contact_person'),
+        type: formData.get('type'),
+    });
+
+    const data = validatedFields.data;
+
+    try {
+
+        if (!data) throw new Error('Errore nell\'aggiornamento del cliente, per favore riprova più tardi');
+
+        await sql`
+            UPDATE clients
+            SET ${sql(data)}
+            WHERE id = ${id}
+            `;
+    } catch (error) {
+        console.log(error);
+    }
+
+    revalidatePath('/dashboard/customers');
+    redirect('/dashboard/customers');
+}
+
 export async function deleteInvoice(id: string) {
     await sql`DELETE FROM invoices WHERE id = ${id}`;
     revalidatePath('/dashboard/invoices');

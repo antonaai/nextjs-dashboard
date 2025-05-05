@@ -10,6 +10,7 @@ import {
   LatestPaymentsRaw,
   Revenue,
   Client,
+  ClientForm,
 } from './definitions';
 import { formatCurrency } from './utils';
 const ITEMS_PER_PAGE = 6;
@@ -266,6 +267,41 @@ export async function fetchInvoiceById(id: string) {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch invoice.');
+  }
+}
+
+export async function fetchClientById(id: string) {
+  try {
+    const data = await sql<ClientForm[]>`
+      SELECT
+        clients.id,
+        clients.name,
+        clients.email,
+        clients.address,
+        clients.zip_code,
+        clients.city,
+        clients.province,
+        clients.country,
+        clients.phone,
+        clients.notes,
+        clients.type,
+        clients.fiscal_code,
+        clients.vat_number,
+        clients.sdi_code,
+        clients.pec_email,
+        clients.contact_person
+      FROM clients
+      WHERE clients.id = ${id};
+    `;
+
+    if (!data || !data[0]) {
+      throw new Error('Failed to fetch client with id ' + id);
+    }
+
+    return data[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch client.');
   }
 }
 

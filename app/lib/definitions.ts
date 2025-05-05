@@ -191,6 +191,25 @@ export type Client = {
   type: string
 };
 
+export type ClientForm = {
+  id: string;
+  name: string,
+  email: string;
+  phone: string;
+  notes?: string;
+  vat_number?: string;
+  fiscal_code?: string;
+  address: string;
+  zip_code: string;
+  city: string;
+  province: string;
+  country: string;
+  sdi_code?: string;
+  pec_email?: string;
+  contact_person?: string;
+  type: string
+};
+
 // PRACTICES
 export type Practice = {
   id: string;
