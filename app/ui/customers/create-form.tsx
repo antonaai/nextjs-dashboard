@@ -29,6 +29,7 @@ export default function Form() {
                                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                                 aria-describedby="name-error"
                                 autoComplete="name"
+                                pattern="^[A-Za-zÀ-ÿ'\- ]{2,50}$"
                                 required
                             />
                         </div>
@@ -83,6 +84,7 @@ export default function Form() {
                                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                                 aria-describedby="address-error"
                                 autoComplete="street-address"
+                                pattern="^[A-Za-z0-9'’\-\s,\.]{5,100}$"
                                 required
                             />
                         </div>
@@ -109,6 +111,7 @@ export default function Form() {
                                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                                 aria-describedby="zipcode-error"
                                 autoComplete="on"
+                                pattern="^\d{5}$"
                                 required
                             />
                         </div>
@@ -137,6 +140,7 @@ export default function Form() {
                                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                                 aria-describedby="city-error"
                                 autoComplete="on"
+                                pattern="^[A-Za-zÀ-ÿ'\- ]{2,50}$"
                                 required
                             />
                         </div>
@@ -163,6 +167,7 @@ export default function Form() {
                                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                                 aria-describedby="province-error"
                                 autoComplete="on"
+                                pattern="^[A-Za-zÀ-ÿ'\- ]{2,50}$"
                                 required
                             />
                         </div>
@@ -192,6 +197,7 @@ export default function Form() {
                                 aria-describedby="country-error"
                                 autoComplete="on"
                                 required
+                                pattern="^[A-Za-zÀ-ÿ'\- ]{2,50}$"
                             />
                         </div>
                         <div id="country-error" aria-live="polite" aria-atomic="true">
@@ -217,6 +223,7 @@ export default function Form() {
                                 className="peer block w-full rounded-md border border-gray-200 py-2 px-3 text-sm outline-2 placeholder:text-gray-500"
                                 aria-describedby="phone-error"
                                 autoComplete="tel"
+                                pattern="^\+?\d{8,15}$"
                                 required
                             />
                         </div>
@@ -294,6 +301,7 @@ export default function Form() {
                                     className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                                     aria-describedby="fiscalCode-error"
                                     autoComplete="on"
+                                    pattern="^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$"
                                 />
                             </div>
                             <div id="fiscalCode-error" aria-live="polite" aria-atomic="true">
@@ -326,6 +334,7 @@ export default function Form() {
                                         className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                                         aria-describedby="vatNumber-error"
                                         autoComplete="on"
+                                        pattern="^\d{11}$"
                                     />
                                 </div>
                                 <div id="vatNumber-error" aria-live="polite" aria-atomic="true">
@@ -351,6 +360,7 @@ export default function Form() {
                                         className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                                         aria-describedby="sdiCode-error"
                                         autoComplete="on"
+                                        pattern="^[A-Z0-9]{6,7}$"
                                     />
                                 </div>
                                 <div id="sdiCode-error" aria-live="polite" aria-atomic="true">
@@ -403,6 +413,7 @@ export default function Form() {
                                         className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                                         aria-describedby="contactPerson-error"
                                         autoComplete="on"
+                                        pattern="^[A-Za-zÀ-ÿ'\- ]{2,50}$"
                                     />
                                 </div>
                                 <div id="contactPerson-error" aria-live="polite" aria-atomic="true">
